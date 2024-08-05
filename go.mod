@@ -1,6 +1,6 @@
 module github.com/0x4f53/textsubs
 
-go 1.23
+go 1.22.3
 
 require github.com/weppos/publicsuffix-go v0.40.2
 
