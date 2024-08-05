@@ -1,9 +1,7 @@
-package main
+package textsubs
 
 import (
-	"fmt"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 
@@ -140,10 +138,4 @@ func DomainsOnly(text string, removeDuplicates bool) []string {
 
 	return results
 
-}
-
-func main() {
-	data, _ := os.ReadFile("testcase.txt")
-	output := SubdomainsOnly(string(data), true)
-	fmt.Println(output)
 }
