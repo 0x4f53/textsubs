@@ -23,18 +23,22 @@ for index, sub := subdomains {
 #### func SubdomainsOnly(text string, removeDuplicates bool)
 
 Returns: only the subdomains (subdomain.example.com) as a list of strings
+
 Inputs:
     text (string) -> The text to parse
     removeDuplicates (bool) -> return only unique names
+    
 Output:
     subdomains ([]string) -> a list of captured subdomains
 
 #### func DomainsOnly(text string, removeDuplicates bool)
 
 Returns: only the domains (example.com) as a list of strings
+
 Inputs:
     text (string) -> The text to parse
     removeDuplicates (bool) -> return only unique names
+
 Output:
     domains ([]string) -> a list of captured domains
 
