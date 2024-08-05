@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"net/url"
+	"os"
 	"regexp"
 	"strings"
 
 	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
-func removeDuplicates(items []string) []string {
+var removeDuplicates = true
+
+func removeDuplicateItems(items []string) []string {
 	encountered := make(map[string]bool)
 	result := []string{}
 
@@ -23,67 +26,124 @@ func removeDuplicates(items []string) []string {
 	return result
 }
 
-func Parse(text string, unique bool, subdomainsOnly bool) []string {
-
-	//check if item contains character escape sequences
-	text = strings.ReplaceAll(text, "\\n", " ")
-	text = strings.ReplaceAll(text, "\\b", " ")
-	text = strings.ReplaceAll(text, "\\a", " ")
-	text = strings.ReplaceAll(text, "\\t", " ")
-	text = strings.ReplaceAll(text, "\\r", " ")
-	text = strings.ReplaceAll(text, "\\f", " ")
-	text = strings.ReplaceAll(text, "\\x", " ")
-	text = strings.ReplaceAll(text, "\\v", " ")
-	text = strings.ReplaceAll(text, "\\'", " ")
-	text = strings.ReplaceAll(text, "\"", " ")
-	text = strings.ReplaceAll(text, "\\e", " ")
-
-	//check if item contains domain-illegal characters
-	matches := regexp.MustCompile(`([a-zA-Z0-9.-]+)`).FindAllStringSubmatch(text, -1)
+func getSubdomains(text string) []string {
 
 	var subdomains []string
 
-	for _, match := range matches {
-		item := match[1]
+	lines := strings.Split(text, "\n")
 
-		if strings.Contains(item, ".") && // Check if item contains dots at all
-			!strings.Contains(item, "..") && // Check if item contains consecutive dots
-			!strings.HasSuffix(item, ".") && // Domain cannot end in '.'
-			(regexp.MustCompile(`\.[a-zA-Z]{2,}`).MatchString(item)) && // At least 2 characters must exist after dot
-			(regexp.MustCompile(`[a-zA-Z]{1,}\.`).MatchString(item)) && // At least 1 character must exist before dot
-			regexp.MustCompile(`[a-zA-Z]`).MatchString(item) { // At least one letter must exist
+	illegalCharactersRegex := regexp.MustCompile(`([a-zA-Z0-9.-]+)`)
+	twoCharsBeforeRegex := regexp.MustCompile(`\.[a-zA-Z]{2,}`)
+	twoCharsAfterRegex := regexp.MustCompile(`[a-zA-Z]{1,}\.`)
+	atLeastOneLetterRegex := regexp.MustCompile(`[a-zA-Z]`)
 
-			domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
-				publicsuffix.DefaultList,
-				item,
-				&publicsuffix.FindOptions{
-					IgnorePrivate: true,
-				},
-			)
+	for _, line := range lines {
+		line, _ = url.QueryUnescape(line)
 
-			if len(domain) == 0 {
-				continue
+		//check if item contains character escape sequences
+		escapeSequences := []string{"\\n", "\\b", "\\a", "\\t", "\\r", "\\f", "\\x", "\\v", "\\'", "\"", "\\e"}
+		for _, seq := range escapeSequences {
+			line = strings.ReplaceAll(line, seq, " ")
+		}
+
+		//check if item contains domain-illegal characters
+		matches := illegalCharactersRegex.FindAllStringSubmatch(line, -1)
+
+		for _, match := range matches {
+			item := match[1]
+
+			if strings.Contains(item, ".") && // Check if item contains dots at all
+				!strings.Contains(item, "..") && // Check if item contains consecutive dots
+				!strings.HasSuffix(item, ".") && // Domain cannot end in '.'
+				(twoCharsBeforeRegex.MatchString(item)) && // At least 2 characters must exist after dot
+				(twoCharsAfterRegex.MatchString(item)) && // At least 1 character must exist before dot
+				(atLeastOneLetterRegex.MatchString(item)) { // At least one letter must exist
+
+				domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+					publicsuffix.DefaultList,
+					item,
+					&publicsuffix.FindOptions{
+						IgnorePrivate: true,
+					},
+				)
+
+				if len(domain) != 0 && item[0] != '-' {
+					subdomains = append(subdomains, item)
+				}
+
 			}
-
-			if subdomainsOnly && strings.EqualFold(domain, item) { // do not let domains be logged
-				continue
-			}
-
-			subdomains = append(subdomains, item)
 
 		}
 
 	}
+	return subdomains
 
-	if unique {
-		subdomains = removeDuplicates(subdomains)
+}
+
+//		Returns: only the subdomains (subdomain.example.com) as a list of strings
+//		Inputs:
+//	 	text (string) -> The text to parse
+//			removeDuplicates (bool) -> return only unique names
+func SubdomainsOnly(text string, removeDuplicates bool) []string {
+
+	subdomains := getSubdomains(text)
+	var results []string
+
+	for _, item := range subdomains {
+		domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+			publicsuffix.DefaultList,
+			item,
+			&publicsuffix.FindOptions{
+				IgnorePrivate: true,
+			},
+		)
+
+		if domain != item {
+			results = append(results, item)
+		}
+
+		if removeDuplicates {
+			results = removeDuplicateItems(results)
+		}
+
 	}
 
-	return subdomains
+	return results
+
+}
+
+//		Returns: only the domains (example.com) as a list of strings
+//		Inputs:
+//	 	text (string) -> The text to parse
+//			removeDuplicates (bool) -> return only unique names
+func DomainsOnly(text string, removeDuplicates bool) []string {
+
+	subdomains := getSubdomains(text)
+	var results []string
+
+	for _, item := range subdomains {
+		domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+			publicsuffix.DefaultList,
+			item,
+			&publicsuffix.FindOptions{
+				IgnorePrivate: true,
+			},
+		)
+
+		results = append(results, domain)
+
+		if removeDuplicates {
+			results = removeDuplicateItems(results)
+		}
+
+	}
+
+	return results
+
 }
 
 func main() {
-	data, _ := ioutil.ReadFile("testcase.txt")
-	output := Parse(string(data), true, true)
+	data, _ := os.ReadFile("testcase.txt")
+	output := SubdomainsOnly(string(data), true)
 	fmt.Println(output)
 }
