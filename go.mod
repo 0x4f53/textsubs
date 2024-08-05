@@ -1,4 +1,4 @@
-module textsubs
+module github.com/0x4f53/textsubs
 
 go 1.22.3
 
