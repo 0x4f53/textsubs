@@ -1,3 +1,5 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/0x4f53/textsubs.svg)](https://pkg.go.dev/github.com/0x4f53/textsubs)
+
 # textsubs
 
 A simple library to extract subdomains and domains from text (*not URLs!)
