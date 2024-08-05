@@ -25,17 +25,26 @@ func removeDuplicates(items []string) []string {
 
 func Parse(text string, unique bool, subdomainsOnly bool) []string {
 
-	//check if item contains domain-legal characters
+	//check if item contains character escape sequences
+	text = strings.ReplaceAll(text, "\\n", " ")
+	text = strings.ReplaceAll(text, "\\b", " ")
+	text = strings.ReplaceAll(text, "\\a", " ")
+	text = strings.ReplaceAll(text, "\\t", " ")
+	text = strings.ReplaceAll(text, "\\r", " ")
+	text = strings.ReplaceAll(text, "\\f", " ")
+	text = strings.ReplaceAll(text, "\\x", " ")
+	text = strings.ReplaceAll(text, "\\v", " ")
+	text = strings.ReplaceAll(text, "\\'", " ")
+	text = strings.ReplaceAll(text, "\"", " ")
+	text = strings.ReplaceAll(text, "\\e", " ")
+
+	//check if item contains domain-illegal characters
 	matches := regexp.MustCompile(`([a-zA-Z0-9.-]+)`).FindAllStringSubmatch(text, -1)
 
 	var subdomains []string
 
 	for _, match := range matches {
 		item := match[1]
-
-		item = strings.TrimSpace(item)
-		item = strings.Trim(item, "\n\b\t\a")
-		item = strings.Replace(item, "\n", " ", -1)
 
 		if strings.Contains(item, ".") && // Check if item contains dots at all
 			!strings.Contains(item, "..") && // Check if item contains consecutive dots

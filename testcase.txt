@@ -107,3 +107,11 @@ subdomain27.example.com
 \t\btest.example.com\b\t
 \\t\\btest.example.com\\b\\t
 \nxn--3rsubdomain27.example.com
+
+
+// Invalid
+-example.com (hyphen at the beginning)
+example-.com (hyphen at the end)
+example..com (consecutive dots)
+exa mple.com (space within the domain)
+ex@ample.com (special character not allowed)
