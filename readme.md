@@ -22,25 +22,25 @@ for index, sub := subdomains {
 
 #### func SubdomainsOnly(text string, removeDuplicates bool)
 
-Returns: only the subdomains (subdomain.example.com) as a list of strings
+- Returns: only the subdomains (subdomain.example.com) as a list of strings
 
-Inputs:
-    text (string) -> The text to parse
-    removeDuplicates (bool) -> return only unique names
-    
-Output:
-    subdomains ([]string) -> a list of captured subdomains
+- Inputs:
+    - text (string) -> The text to parse
+    - removeDuplicates (bool) -> return only unique names
+
+- Output:
+    - subdomains ([]string) -> a list of captured subdomains
 
 #### func DomainsOnly(text string, removeDuplicates bool)
 
-Returns: only the domains (example.com) as a list of strings
+- Returns: only the domains (example.com) as a list of strings
 
-Inputs:
-    text (string) -> The text to parse
-    removeDuplicates (bool) -> return only unique names
+- Inputs:
+    - text (string) -> The text to parse
+    - removeDuplicates (bool) -> return only unique names
 
-Output:
-    domains ([]string) -> a list of captured domains
+- Output:
+    - domains ([]string) -> a list of captured domains
 
 ### Working
 This package uses [publicsuffix2](https://github.com/weppos/publicsuffix-go), basic regex matching and a few if-else statements to determine if a string containing dots
