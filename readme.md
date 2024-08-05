@@ -10,7 +10,13 @@ go get github.com/0x4f53/textsubs
 2. Use it in code as usual
 ```
 ...
-output_subdomains := SubdomainsOnly(string(data), true)
+subdomains := SubdomainsOnly(string(data), true)
+
+for index, sub := subdomains {
+    // Rest of the code
+}
+
+...
 ```
 
 ### Functions
