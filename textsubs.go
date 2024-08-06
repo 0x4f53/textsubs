@@ -115,7 +115,7 @@ func getSubdomains(text string) ([]string, error) {
 		broken := BreakFusedSubdomains(subdomain)
 		brokenList := strings.Split(broken, "\n")
 		for _, element := range brokenList {
-			if element != "" && !stringInSlice(element, subdomains) {
+			if element != "" && !stringInSlice(element, subdomains) && element[0] != '.' {
 				finalList = append(finalList, element)
 			}
 		}
@@ -245,7 +245,9 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, er
 		pair.Subdomain = item
 		pair.Domain = domain
 
-		results = append(results, pair)
+		if domain != item {
+			results = append(results, pair)
+		}
 
 		if removeDuplicates {
 			results = removeDuplicateSubAndDoms(results)
