@@ -84,7 +84,8 @@ func getSubdomains(text string) ([]string, error) {
 				)
 
 				if err != nil {
-					return subdomains, err
+					// TLD is not in the publicsuffix list, skip
+					// return subdomains, err
 				}
 
 				if len(domain) != 0 && item[0] != '-' {
@@ -125,7 +126,8 @@ func SubdomainsOnly(text string, removeDuplicates bool) ([]string, error) {
 		)
 
 		if err != nil {
-			return results, err
+			// TLD is not in the publicsuffix list, skip
+			// return results, err
 		}
 
 		if domain != item {
@@ -166,7 +168,8 @@ func DomainsOnly(text string, removeDuplicates bool) ([]string, error) {
 		)
 
 		if err != nil {
-			return results, err
+			// TLD is not in the publicsuffix list, skip
+			// return results, err
 		}
 
 		results = append(results, domain)
@@ -210,7 +213,8 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, er
 		)
 
 		if err != nil {
-			return results, err
+			// TLD is not in the publicsuffix list, skip
+			// return results, err
 		}
 
 		var pair SubAndDom

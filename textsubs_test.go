@@ -18,7 +18,12 @@ func TestMyFunction(t *testing.T) {
 	}
 
 	t.Log("Found subdomains: ")
-	output_subdomains := SubdomainsOnly(string(data), true)
+	output_subdomains, err := SubdomainsOnly(string(data), true)
+
+	if err != nil {
+		t.Error(err)
+	}
+
 	for index, item := range output_subdomains {
 		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
 	}
@@ -26,7 +31,12 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Found domains: ")
-	output_domains := DomainsOnly(string(data), true)
+	output_domains, err := DomainsOnly(string(data), true)
+
+	if err != nil {
+		t.Error(err)
+	}
+
 	for index, item := range output_domains {
 		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
 	}
@@ -34,7 +44,12 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Paired outputs: ")
-	output_pairs := SubdomainAndDomainPair(string(data), true)
+	output_pairs, err := SubdomainAndDomainPair(string(data), true)
+
+	if err != nil {
+		t.Error(err)
+	}
+
 	for index, item := range output_pairs {
 		output_pair_bytes, _ := json.Marshal(item)
 		t.Log("\t" + strconv.Itoa(index+1) + ". " + string(output_pair_bytes))
