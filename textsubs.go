@@ -238,6 +238,12 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, er
 
 var tlds = []string{".com", ".org", ".store", ".net", ".int", ".edu", ".gov", ".mil", ".co", ".us", ".info", ".biz", ".me", ".mobi", ".asia", ".tel", ".tv", ".cc", ".ws", ".in", ".uk", ".ca", ".de", ".eu", ".fr", ".au", ".ru", ".ch", ".it", ".nl", ".se", ".no", ".es", ".jp", ".br", ".cn", ".kr", ".mx", ".nz", ".za", ".ie", ".be", ".at", ".dk", ".fi", ".gr", ".pt", ".tr", ".pl", ".hk", ".sg", ".my", ".th", ".vn", ".tw", ".il", ".ar", ".cl", ".ve", ".uy", ".co.uk", ".co.in", ".co.jp", ".cn.com", ".de.com", ".eu.com", ".gb.net", ".hu.net", ".jp.net", ".kr.com", ".qc.com", ".ru.com", ".sa.com", ".se.net", ".uk.com", ".us.com", ".za.com", ".ac", ".ad", ".ae", ".af", ".ag", ".ai", ".al", ".am", ".an", ".ao", ".aq", ".ar", ".as", ".at", ".au", ".aw", ".ax", ".az", ".ba", ".bb", ".bd", ".bf", ".bg", ".bh", ".bi", ".bj", ".bm", ".bn", ".bo", ".bq", ".br", ".bs", ".bt", ".bv", ".bw", ".by", ".bz", ".ca", ".cc", ".cd", ".cf", ".cg", ".ch", ".ci", ".ck", ".cl", ".cm", ".cn", ".co", ".cr", ".cu", ".cv", ".cw", ".cx", ".cy", ".cz", ".de", ".dj", ".dk", ".dm", ".do", ".dz", ".ec", ".ee", ".eg", ".eh", ".er", ".es", ".et", ".eu", ".fi", ".fj", ".fk", ".fm", ".fo", ".fr", ".ga", ".gb", ".gd", ".ge", ".gf", ".gg", ".gh", ".gi", ".gl", ".gm", ".gn", ".gp", ".gq", ".gr", ".gs", ".gt", ".gu", ".gw", ".gy"}
 
+//		Returns: a string containing subdomains broken if fused
+//		Example: en.wikipedia.org0x4f.medium.com gives
+//		  en.wikipedia.org
+//		  0x4f.medium.com
+//		Inputs:
+//	 	text (string) -> The text to parse
 func BreakFusedSubdomains(text string) string {
 
 	var output string
