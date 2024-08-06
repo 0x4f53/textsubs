@@ -1,6 +1,7 @@
 package textsubs
 
 import (
+	"encoding/json"
 	"os"
 	"strconv"
 	"testing"
@@ -28,6 +29,15 @@ func TestMyFunction(t *testing.T) {
 	output_domains := DomainsOnly(string(data), true)
 	for index, item := range output_domains {
 		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
+	}
+
+	t.Log("")
+
+	t.Log("Paired outputs: ")
+	output_pairs := SubdomainAndDomainPair(string(data), true)
+	for index, item := range output_pairs {
+		output_pair_bytes, _ := json.Marshal(item)
+		t.Log("\t" + strconv.Itoa(index+1) + ". " + string(output_pair_bytes))
 	}
 
 }

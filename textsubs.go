@@ -24,7 +24,21 @@ func removeDuplicateItems(items []string) []string {
 	return result
 }
 
-func getSubdomains(text string) []string {
+func removeDuplicateSubAndDoms(items []SubAndDom) []SubAndDom {
+	encountered := make(map[SubAndDom]bool)
+	result := []SubAndDom{}
+
+	for _, item := range items {
+		if !encountered[item] {
+			encountered[item] = true
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+func getSubdomains(text string) ([]string, error) {
 
 	var subdomains []string
 
@@ -36,7 +50,11 @@ func getSubdomains(text string) []string {
 	atLeastOneLetterRegex := regexp.MustCompile(`[a-zA-Z]`)
 
 	for _, line := range lines {
-		line, _ = url.QueryUnescape(line)
+		line, err := url.QueryUnescape(line)
+
+		if err != nil {
+			return subdomains, err
+		}
 
 		//check if item contains character escape sequences
 		escapeSequences := []string{"\\n", "\\b", "\\a", "\\t", "\\r", "\\f", "\\x", "\\v", "\\'", "\"", "\\e"}
@@ -57,13 +75,17 @@ func getSubdomains(text string) []string {
 				(twoCharsAfterRegex.MatchString(item)) && // At least 1 character must exist before dot
 				(atLeastOneLetterRegex.MatchString(item)) { // At least one letter must exist
 
-				domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+				domain, err := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
 					publicsuffix.DefaultList,
 					item,
 					&publicsuffix.FindOptions{
 						IgnorePrivate: true,
 					},
 				)
+
+				if err != nil {
+					return subdomains, err
+				}
 
 				if len(domain) != 0 && item[0] != '-' {
 					subdomains = append(subdomains, item)
@@ -74,7 +96,8 @@ func getSubdomains(text string) []string {
 		}
 
 	}
-	return subdomains
+
+	return subdomains, nil
 
 }
 
@@ -82,19 +105,28 @@ func getSubdomains(text string) []string {
 //		Inputs:
 //	 	text (string) -> The text to parse
 //			removeDuplicates (bool) -> return only unique names
-func SubdomainsOnly(text string, removeDuplicates bool) []string {
+func SubdomainsOnly(text string, removeDuplicates bool) ([]string, error) {
 
-	subdomains := getSubdomains(text)
 	var results []string
 
+	subdomains, err := getSubdomains(text)
+
+	if err != nil {
+		return results, err
+	}
+
 	for _, item := range subdomains {
-		domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+		domain, err := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
 			publicsuffix.DefaultList,
 			item,
 			&publicsuffix.FindOptions{
 				IgnorePrivate: true,
 			},
 		)
+
+		if err != nil {
+			return results, err
+		}
 
 		if domain != item {
 			results = append(results, item)
@@ -106,7 +138,7 @@ func SubdomainsOnly(text string, removeDuplicates bool) []string {
 
 	}
 
-	return results
+	return results, nil
 
 }
 
@@ -114,19 +146,28 @@ func SubdomainsOnly(text string, removeDuplicates bool) []string {
 //		Inputs:
 //	 	text (string) -> The text to parse
 //			removeDuplicates (bool) -> return only unique names
-func DomainsOnly(text string, removeDuplicates bool) []string {
+func DomainsOnly(text string, removeDuplicates bool) ([]string, error) {
 
-	subdomains := getSubdomains(text)
 	var results []string
 
+	subdomains, err := getSubdomains(text)
+
+	if err != nil {
+		return results, err
+	}
+
 	for _, item := range subdomains {
-		domain, _ := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+		domain, err := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
 			publicsuffix.DefaultList,
 			item,
 			&publicsuffix.FindOptions{
 				IgnorePrivate: true,
 			},
 		)
+
+		if err != nil {
+			return results, err
+		}
 
 		results = append(results, domain)
 
@@ -136,6 +177,55 @@ func DomainsOnly(text string, removeDuplicates bool) []string {
 
 	}
 
-	return results
+	return results, nil
+
+}
+
+type SubAndDom struct {
+	Subdomain string `json:"subdomain"`
+	Domain    string `json:"domain"`
+}
+
+//		Returns: a struct containing a subdomain and its domain
+//		{subdomain: subdomain.example.com, domain: example.com} as a list of a struct of strings
+//		Inputs:
+//	 	text (string) -> The text to parse
+//			removeDuplicates (bool) -> return only unique names
+func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, error) {
+
+	var results []SubAndDom
+	subdomains, err := getSubdomains(text)
+
+	if err != nil {
+		return results, err
+	}
+
+	for _, item := range subdomains {
+		domain, err := publicsuffix.DomainFromListWithOptions( // Check if TLD is valid
+			publicsuffix.DefaultList,
+			item,
+			&publicsuffix.FindOptions{
+				IgnorePrivate: true,
+			},
+		)
+
+		if err != nil {
+			return results, err
+		}
+
+		var pair SubAndDom
+
+		pair.Subdomain = item
+		pair.Domain = domain
+
+		results = append(results, pair)
+
+		if removeDuplicates {
+			results = removeDuplicateSubAndDoms(results)
+		}
+
+	}
+
+	return results, nil
 
 }
