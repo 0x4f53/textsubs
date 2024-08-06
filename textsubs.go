@@ -38,9 +38,16 @@ func removeDuplicateSubAndDoms(items []SubAndDom) []SubAndDom {
 	return result
 }
 
-func getSubdomains(text string) ([]string, error) {
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
 
-	text = BreakFusedSubdomains(text)
+func getSubdomains(text string) ([]string, error) {
 
 	var subdomains []string
 
@@ -55,7 +62,8 @@ func getSubdomains(text string) ([]string, error) {
 		line, err := url.QueryUnescape(line)
 
 		if err != nil {
-			return subdomains, err
+			// Skip URL characters that cannot be processed
+			// return subdomains, err
 		}
 
 		//check if item contains character escape sequences
@@ -100,7 +108,20 @@ func getSubdomains(text string) ([]string, error) {
 
 	}
 
-	return subdomains, nil
+	var finalList = subdomains
+
+	// Break any fused subdomains/domains
+	for _, subdomain := range subdomains {
+		broken := BreakFusedSubdomains(subdomain)
+		brokenList := strings.Split(broken, "\n")
+		for _, element := range brokenList {
+			if element != "" && !stringInSlice(element, subdomains) {
+				finalList = append(finalList, element)
+			}
+		}
+	}
+
+	return finalList, nil
 
 }
 
