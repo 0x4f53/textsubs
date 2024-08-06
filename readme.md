@@ -24,17 +24,17 @@ for index, sub := subdomains {
 
 #### SubdomainsOnly
 
-- Returns: only the subdomains (subdomain.example.com) as a list of strings
+- Returns: only the subdomains (subdomain.example.com) as a slice of strings
 
 
 #### DomainsOnly
 
-- Returns: only the domains (example.com) as a list of strings
+- Returns: only the domains (example.com) as a slice of strings
 
 
 #### BreakFusedSubdomains
 
-- Returns: only the domains (example.com) as a list of strings
+- Returns: the subdomains/domains that are fused on accident, split into newlines
 
 Example: en.wikipedia.org0x4f.medium.com gives
             en.wikipedia.org
