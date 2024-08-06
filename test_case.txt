@@ -115,3 +115,6 @@ example-.com (hyphen at the end)
 example..com (consecutive dots)
 exa mple.com (space within the domain)
 ex@ample.com (special character not allowed)
+
+// Fused
+dev.static.landstorebase.storemyspreadshop.atmyspreadshop.bemyspreadshop.camyspreadshop.chmyspreadshop.demyspreadshop.dkmyspreadshop.esmyspreadshop.fimyspreadshop.frmyspreadshop.iemyspreadshop.itmyspreadshop.nlmyspreadshop.nomyspreadshop.plmyspreadshop.sestreak-link.comstreaklinks.comazimuth.networklima-city.rockssite.transip.mediskstation.orgvirtual-user.deexpress.val.runvoorloper.clouddaemon.panel.ggmesswithdns.comyandexcloud.net
