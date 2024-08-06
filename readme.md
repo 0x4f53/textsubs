@@ -2,7 +2,7 @@
 
 # textsubs
 
-A simple library to extract subdomains and domains from text (*not URLs!)
+A simple Golang library to extract subdomains and domains from text (*not URLs!)
 
 ### Usage
 1. Import this package in your go program
