@@ -40,7 +40,7 @@ func removeDuplicateSubAndDoms(items []SubAndDom) []SubAndDom {
 
 func getSubdomains(text string) ([]string, error) {
 
-	text = breakFusedSubdomains(text)
+	text = BreakFusedSubdomains(text)
 
 	var subdomains []string
 
