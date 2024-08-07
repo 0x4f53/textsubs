@@ -10,7 +10,6 @@ import (
 var test_case_input_file = "test_case.txt"
 
 func TestMyFunction(t *testing.T) {
-	// Test implementation
 	data, err := os.ReadFile(test_case_input_file)
 
 	if err != nil {
@@ -57,21 +56,19 @@ func TestMyFunction(t *testing.T) {
 
 	t.Log("")
 
-	t.Log("Resolving subdomains: ")
+	t.Log("Resolved subdomains: ")
 	resolved_subdomains := Resolve(output_subdomains)
-	var indexSubs = 0
-	for item, resolves := range resolved_subdomains {
-		t.Log("\t" + strconv.Itoa(indexSubs+1) + ". " + item + " : " + strconv.FormatBool(resolves))
-		indexSubs++
+	for index, item := range resolved_subdomains {
+		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
 	}
 
 	t.Log("")
 
-	t.Log("Resolving domains: ")
+	t.Log("Resolved domains: ")
 	resolved_domains := Resolve(output_domains)
 	var indexDomains = 0
-	for item, resolves := range resolved_domains {
-		t.Log("\t" + strconv.Itoa(indexDomains+1) + ". " + item + " : " + strconv.FormatBool(resolves))
+	for index, item := range resolved_domains {
+		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
 		indexDomains++
 	}
 
