@@ -55,4 +55,24 @@ func TestMyFunction(t *testing.T) {
 		t.Log("\t" + strconv.Itoa(index+1) + ". " + string(output_pair_bytes))
 	}
 
+	t.Log("")
+
+	t.Log("Resolving subdomains: ")
+	resolved_subdomains := Resolve(output_subdomains)
+	var indexSubs = 0
+	for item, resolves := range resolved_subdomains {
+		t.Log("\t" + strconv.Itoa(indexSubs+1) + ". " + item + " : " + strconv.FormatBool(resolves))
+		indexSubs++
+	}
+
+	t.Log("")
+
+	t.Log("Resolving domains: ")
+	resolved_domains := Resolve(output_domains)
+	var indexDomains = 0
+	for item, resolves := range resolved_domains {
+		t.Log("\t" + strconv.Itoa(indexDomains+1) + ". " + item + " : " + strconv.FormatBool(resolves))
+		indexDomains++
+	}
+
 }

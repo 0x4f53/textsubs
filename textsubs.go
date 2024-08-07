@@ -1,9 +1,11 @@
 package textsubs
 
 import (
+	"net"
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
@@ -293,4 +295,45 @@ func BreakFusedSubdomains(text string) string {
 
 	return output
 
+}
+
+func checkSubdomain(subdomain string, wg *sync.WaitGroup, results chan<- map[string]bool) {
+	defer wg.Done()
+	host := subdomain + "."
+	_, err := net.LookupHost(host)
+	if err == nil {
+		results <- map[string]bool{subdomain: true}
+	} else {
+		results <- map[string]bool{subdomain: false}
+	}
+}
+
+//		Returns: a map of format (item, bool) containing items (subdomains or domains) after checking
+//				if they resolve when pinged (using LookupHost)
+//		Example: [0x4f.in play.google.com fakesite123131231.dev] gives
+//			{0x4f.in : true, play.google.com, fakesite123131231.dev : false}
+//		Inputs:
+//	 	[item1 item2 item3...] ([]string) -> The list of items to resolve
+func Resolve(items []string) map[string]bool {
+	var wg sync.WaitGroup
+	results := make(chan map[string]bool, len(items))
+	finalResults := make(map[string]bool)
+
+	for _, item := range items {
+		wg.Add(1)
+		go checkSubdomain(item, &wg, results)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for result := range results {
+		for k, v := range result {
+			finalResults[k] = v
+		}
+	}
+
+	return finalResults
 }
