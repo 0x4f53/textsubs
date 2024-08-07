@@ -309,7 +309,7 @@ func checkSubdomain(subdomain string, wg *sync.WaitGroup, results chan<- map[str
 }
 
 //		Returns: a map of format (item, bool) containing items (subdomains or domains) after checking
-//				if they resolve when pinged (using LookupHost)
+//				if they resolve when pinged (using LookupHost and waitgroups)
 //		Example: [0x4f.in play.google.com fakesite123131231.dev] gives
 //			{0x4f.in : true, play.google.com, fakesite123131231.dev : false}
 //		Inputs:
