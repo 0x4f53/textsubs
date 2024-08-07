@@ -114,7 +114,9 @@ func getSubdomains(text string) ([]string, error) {
 	for _, unbrokenSubdomain := range subdomains {
 		brokenItems := BreakFusedItems(unbrokenSubdomain)
 		for _, brokenItem := range brokenItems {
-			finalList = append(finalList, brokenItem)
+			if len(brokenItem) > 2 && strings.Contains(brokenItem, ".") {
+				finalList = append(finalList, brokenItem)
+			}
 		}
 	}
 
