@@ -10,8 +10,6 @@ import (
 	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
-var removeDuplicates = true
-
 func removeDuplicateItems(items []string) []string {
 	encountered := make(map[string]bool)
 	result := []string{}
@@ -132,9 +130,8 @@ func getSubdomains(text string, breakFused bool) ([]string, error) {
 //		Returns: only the subdomains (subdomain.example.com) as a list of strings
 //		Inputs:
 //	 	text (string) -> The text to parse
-//			removeDuplicates (bool) -> return only unique names
 //			breakFused (bool) -> try and split fused subdomains (e.g. www.0x4f.iniforgot.apple.com becomes [www.0x4f.in iforgot.apple.com])
-func SubdomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]string, error) {
+func SubdomainsOnly(text string, breakFused bool) ([]string, error) {
 
 	var results []string
 
@@ -162,9 +159,7 @@ func SubdomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]stri
 			results = append(results, item)
 		}
 
-		if removeDuplicates {
-			results = removeDuplicateItems(results)
-		}
+		results = removeDuplicateItems(results)
 
 	}
 
@@ -175,9 +170,8 @@ func SubdomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]stri
 //		Returns: only the domains (example.com) as a list of strings
 //		Inputs:
 //	 	text (string) -> The text to parse
-//			removeDuplicates (bool) -> return only unique names
 //			breakFused (bool) -> try and split fused domains (e.g. 0x4f.inapple.com becomes [0x4f.in apple.com])
-func DomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]string, error) {
+func DomainsOnly(text string, breakFused bool) ([]string, error) {
 
 	var results []string
 
@@ -203,10 +197,7 @@ func DomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]string,
 
 		results = append(results, domain)
 
-		if removeDuplicates {
-			results = removeDuplicateItems(results)
-		}
-
+		results = removeDuplicateItems(results)
 	}
 
 	return results, nil
@@ -222,10 +213,9 @@ type SubAndDom struct {
 //		{subdomain: subdomain.example.com, domain: example.com} as a list of a struct of strings
 //		Inputs:
 //	 	text (string) -> The text to parse
-//			removeDuplicates (bool) -> return only unique names
 //			keepDomains (bool) -> return domain even if domain does not contain a subdomain
 //			breakFused (bool) -> try and split fused subdomains and domains (e.g. www.0x4f.iniforgot.apple.com becomes [www.0x4f.in iforgot.apple.com])
-func SubdomainAndDomainPair(text string, removeDuplicates bool, keepDomains bool, breakFused bool) ([]SubAndDom, error) {
+func SubdomainAndDomainPair(text string, keepDomains bool, breakFused bool) ([]SubAndDom, error) {
 
 	var results []SubAndDom
 	subdomains, err := getSubdomains(text, breakFused)
@@ -255,9 +245,7 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool, keepDomains bool
 
 		results = append(results, pair)
 
-		if removeDuplicates {
-			results = removeDuplicateSubAndDoms(results)
-		}
+		results = removeDuplicateSubAndDoms(results)
 
 	}
 

@@ -17,7 +17,7 @@ func TestMyFunction(t *testing.T) {
 	}
 
 	t.Log("Found subdomains: ")
-	output_subdomains, err := SubdomainsOnly(string(data), true, false)
+	output_subdomains, err := SubdomainsOnly(string(data), false)
 
 	if err != nil {
 		t.Error(err)
@@ -30,7 +30,7 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Found domains: ")
-	output_domains, err := DomainsOnly(string(data), true, false)
+	output_domains, err := DomainsOnly(string(data), false)
 
 	if err != nil {
 		t.Error(err)
@@ -43,7 +43,7 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Paired outputs: ")
-	output_pairs, err := SubdomainAndDomainPair(string(data), true, true, true)
+	output_pairs, err := SubdomainAndDomainPair(string(data), true, true)
 
 	if err != nil {
 		t.Error(err)
