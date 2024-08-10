@@ -49,7 +49,7 @@ func stringInSlice(a string, list []string) bool {
 	return false
 }
 
-func getSubdomains(text string) ([]string, error) {
+func getSubdomains(text string, breakFused bool) ([]string, error) {
 
 	var subdomains []string
 
@@ -110,11 +110,16 @@ func getSubdomains(text string) ([]string, error) {
 
 	}
 
-	var finalList []string
+	if !breakFused {
+		return subdomains, nil
+	}
+
+	var finalList = subdomains
 	for _, unbrokenSubdomain := range subdomains {
 		brokenItems := BreakFusedItems(unbrokenSubdomain)
+
 		for _, brokenItem := range brokenItems {
-			if len(brokenItem) > 2 && strings.Contains(brokenItem, ".") {
+			if len(brokenItem) >= 4 && strings.Contains(brokenItem, ".") {
 				finalList = append(finalList, brokenItem)
 			}
 		}
@@ -128,11 +133,12 @@ func getSubdomains(text string) ([]string, error) {
 //		Inputs:
 //	 	text (string) -> The text to parse
 //			removeDuplicates (bool) -> return only unique names
-func SubdomainsOnly(text string, removeDuplicates bool) ([]string, error) {
+//			breakFused (bool) -> try and split fused subdomains (e.g. www.0x4f.iniforgot.apple.com becomes [www.0x4f.in iforgot.apple.com])
+func SubdomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]string, error) {
 
 	var results []string
 
-	subdomains, err := getSubdomains(text)
+	subdomains, err := getSubdomains(text, breakFused)
 
 	if err != nil {
 		return results, err
@@ -170,11 +176,12 @@ func SubdomainsOnly(text string, removeDuplicates bool) ([]string, error) {
 //		Inputs:
 //	 	text (string) -> The text to parse
 //			removeDuplicates (bool) -> return only unique names
-func DomainsOnly(text string, removeDuplicates bool) ([]string, error) {
+//			breakFused (bool) -> try and split fused domains (e.g. 0x4f.inapple.com becomes [0x4f.in apple.com])
+func DomainsOnly(text string, removeDuplicates bool, breakFused bool) ([]string, error) {
 
 	var results []string
 
-	subdomains, err := getSubdomains(text)
+	subdomains, err := getSubdomains(text, breakFused)
 
 	if err != nil {
 		return results, err
@@ -216,10 +223,12 @@ type SubAndDom struct {
 //		Inputs:
 //	 	text (string) -> The text to parse
 //			removeDuplicates (bool) -> return only unique names
-func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, error) {
+//			keepDomains (bool) -> return domain even if domain does not contain a subdomain
+//			breakFused (bool) -> try and split fused subdomains and domains (e.g. www.0x4f.iniforgot.apple.com becomes [www.0x4f.in iforgot.apple.com])
+func SubdomainAndDomainPair(text string, removeDuplicates bool, breakFused bool, keepDomains bool) ([]SubAndDom, error) {
 
 	var results []SubAndDom
-	subdomains, err := getSubdomains(text)
+	subdomains, err := getSubdomains(text, breakFused)
 
 	if err != nil {
 		return results, err
@@ -244,7 +253,11 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool) ([]SubAndDom, er
 		pair.Subdomain = item
 		pair.Domain = domain
 
-		if domain != item {
+		if keepDomains {
+			if domain != item {
+				results = append(results, pair)
+			}
+		} else {
 			results = append(results, pair)
 		}
 
@@ -277,19 +290,16 @@ func BreakFusedItems(text string) []string {
 
 	matches := re.FindAllStringIndex(text, -1)
 
-	var result []string
+	var results []string
 	start := 0
 	for _, match := range matches {
 		end := match[1]
-		result = append(result, text[start:end])
+		results = append(results, text[start:end])
 		start = end
 	}
 
-	if start < len(text) {
-		result = append(result, text[start:])
-	}
+	return results
 
-	return result
 }
 
 func checkSubdomain(subdomain string, wg *sync.WaitGroup, results chan<- string) {
