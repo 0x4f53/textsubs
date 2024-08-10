@@ -43,7 +43,7 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Paired outputs: ")
-	output_pairs, err := SubdomainAndDomainPair(string(data), true, false, true)
+	output_pairs, err := SubdomainAndDomainPair(string(data), true, true, true)
 
 	if err != nil {
 		t.Error(err)

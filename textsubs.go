@@ -225,7 +225,7 @@ type SubAndDom struct {
 //			removeDuplicates (bool) -> return only unique names
 //			keepDomains (bool) -> return domain even if domain does not contain a subdomain
 //			breakFused (bool) -> try and split fused subdomains and domains (e.g. www.0x4f.iniforgot.apple.com becomes [www.0x4f.in iforgot.apple.com])
-func SubdomainAndDomainPair(text string, removeDuplicates bool, breakFused bool, keepDomains bool) ([]SubAndDom, error) {
+func SubdomainAndDomainPair(text string, removeDuplicates bool, keepDomains bool, breakFused bool) ([]SubAndDom, error) {
 
 	var results []SubAndDom
 	subdomains, err := getSubdomains(text, breakFused)
@@ -253,18 +253,22 @@ func SubdomainAndDomainPair(text string, removeDuplicates bool, breakFused bool,
 		pair.Subdomain = item
 		pair.Domain = domain
 
-		if keepDomains {
-			if domain != item {
-				results = append(results, pair)
-			}
-		} else {
-			results = append(results, pair)
-		}
+		results = append(results, pair)
 
 		if removeDuplicates {
 			results = removeDuplicateSubAndDoms(results)
 		}
 
+	}
+
+	if !keepDomains {
+		var subsOnly []SubAndDom
+		for _, item := range results {
+			if item.Domain != item.Subdomain {
+				subsOnly = append(subsOnly, item)
+			}
+		}
+		results = subsOnly
 	}
 
 	return results, nil
