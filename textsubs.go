@@ -51,6 +51,8 @@ func getSubdomains(text string, breakFused bool) ([]string, error) {
 
 	var subdomains []string
 
+	text = strings.ToLower(text)
+
 	lines := strings.Split(text, "\n")
 
 	illegalCharactersRegex := regexp.MustCompile(`([a-zA-Z0-9.-]+)`)
