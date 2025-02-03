@@ -118,3 +118,10 @@ ex@ample.com (special character not allowed)
 
 // Fused
 google.comapple.com
+
+// IP addresses
+192.168.0.1
+222.222.222.222
+300.300.033.000
+192.168.0.000
+192.168.0.1.

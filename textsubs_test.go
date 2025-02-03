@@ -11,13 +11,14 @@ var test_case_input_file = "test_case.txt"
 
 func TestMyFunction(t *testing.T) {
 	data, err := os.ReadFile(test_case_input_file)
+	dataString := string(data)
 
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log("Found subdomains: ")
-	output_subdomains, err := SubdomainsOnly(string(data), false)
+	output_subdomains, err := SubdomainsOnly(dataString, false)
 
 	if err != nil {
 		t.Error(err)
@@ -30,7 +31,7 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Found domains: ")
-	output_domains, err := DomainsOnly(string(data), false)
+	output_domains, err := DomainsOnly(dataString, false)
 
 	if err != nil {
 		t.Error(err)
@@ -42,8 +43,21 @@ func TestMyFunction(t *testing.T) {
 
 	t.Log("")
 
+	t.Log("Found IP addresses: ")
+	output_ip_addresses, err := listIPs(dataString)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	for index, item := range output_ip_addresses {
+		t.Log("\t" + strconv.Itoa(index+1) + ". " + item)
+	}
+
+	t.Log("")
+
 	t.Log("Paired outputs: ")
-	output_pairs, err := SubdomainAndDomainPair(string(data), true, true)
+	output_pairs, err := SubdomainAndDomainPair(dataString, true, true)
 
 	if err != nil {
 		t.Error(err)
