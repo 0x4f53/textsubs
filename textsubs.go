@@ -268,7 +268,7 @@ func SubdomainAndDomainPair(text string, keepDomains bool, breakFused bool) ([]S
 //		Returns: only a list of IP addresses as strings, where each octet is from 0 to 255
 //		Inputs:
 //	 	text (string) -> The text to parse
-func listIPs(text string) ([]string, error) {
+func ListIPs(text string) ([]string, error) {
 
 	var results []string
 
