@@ -44,7 +44,7 @@ func TestMyFunction(t *testing.T) {
 	t.Log("")
 
 	t.Log("Found IP addresses: ")
-	output_ip_addresses, err := listIPs(dataString)
+	output_ip_addresses, err := ListIPs(dataString)
 
 	if err != nil {
 		t.Error(err)
